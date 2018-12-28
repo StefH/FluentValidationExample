@@ -28,6 +28,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
         private static void AddServices(this IServiceCollection services)
         {
+            services.AddTransient<IValidator<AddressDto>, AddressValidator>();
             services.AddTransient<IValidator<PersonDto>, PersonValidator>();
 
             services.AddScoped<IPersonService, PersonService>();

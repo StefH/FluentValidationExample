@@ -9,5 +9,8 @@ namespace FluentValidationExample.Web.Models
 
         [Required]
         public string LastName { get; set; }
+
+        [Required]
+        public string Street { get; set; }
     }
 }
