@@ -12,6 +12,9 @@ namespace FluentValidationExample.Business.Validation
             RuleFor(dto => dto.First)
                 .NotEmpty()
                 .Must(CheckFirst).WithMessage("no 'a' allowed");
+
+            RuleFor(dto => dto.Last)
+                .NotEmpty();
         }
 
         private bool CheckFirst(string value)

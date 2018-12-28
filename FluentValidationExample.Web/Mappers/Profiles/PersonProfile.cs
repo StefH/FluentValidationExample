@@ -9,7 +9,9 @@ namespace FluentValidationExample.Web.Mappers.Profiles
         public PersonProfile()
         {
             CreateMap<Person, PersonDto>()
-                .ForMember(dto => dto.First, opt => opt.MapFrom(model => model.FirstName));
+                .ForMember(dto => dto.First, opt => opt.MapFrom(model => model.FirstName))
+                .ForMember(dto => dto.Last, opt => opt.MapFrom(model => model.LastName))
+                ;
         }
     }
 }
