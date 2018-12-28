@@ -1,10 +1,11 @@
-﻿using FluentValidationExample.Business.Interfaces.Public;
+﻿using AutoMapper;
+using FluentValidationExample.Business.Interfaces.Public;
 using FluentValidationExample.Business.Models.Public;
 using FluentValidationExample.Common.Validation;
 using FluentValidationExample.Web.Models;
+using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using JetBrains.Annotations;
 
 namespace FluentValidationExample.Web.Controllers
 {
@@ -13,16 +14,20 @@ namespace FluentValidationExample.Web.Controllers
     public class PersonsController : ControllerBase
     {
         private readonly IPersonService _service;
+        [NotNull] private readonly IMapper _mapper;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PersonsController"/> class.
         /// </summary>
         /// <param name="service">The service.</param>
-        public PersonsController([NotNull] IPersonService service)
+        /// <param name="mapper">The mapper.</param>
+        public PersonsController([NotNull] IPersonService service, [NotNull] IMapper mapper)
         {
             Guard.NotNull(service, nameof(service));
+            Guard.NotNull(mapper, nameof(mapper));
 
             _service = service;
+            _mapper = mapper;
         }
 
         // GET api/persons
@@ -41,7 +46,7 @@ namespace FluentValidationExample.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var dto = new PersonDto { First = person.FirstName };
+            var dto = _mapper.Map<PersonDto>(person);
             _service.Add(dto);
 
             return Ok();
