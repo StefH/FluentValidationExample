@@ -12,6 +12,10 @@ namespace FluentValidationExample.Business.Validation
             RuleFor(dto => dto.Street)
                 .NotEmpty()
                 .MaximumLength(3);
+
+            RuleFor(dto => dto.City)
+                .NotEmpty()
+                .MaximumLength(2);
         }
     }
 }
