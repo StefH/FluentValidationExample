@@ -36,7 +36,7 @@ namespace FluentValidationExample.Web.Validation
 
             var matchingTypeMap = matchingTypeMaps.First();
             var propertyMapping = matchingTypeMap.PropertyMaps.FirstOrDefault(pm => pm.DestinationName == memberInfo.Name);
-            if (propertyMapping == null)
+            if (propertyMapping == null || propertyMapping.SourceMember == null)
             {
                 return memberInfo.Name;
             }
