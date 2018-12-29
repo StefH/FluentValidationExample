@@ -9,10 +9,10 @@ namespace FluentValidationExample.Web.Validation
         /// <summary>
         /// Resolves the property name for the specified type, memberInfo and lambdaExpression.
         /// </summary>
-        /// <param name="type">The type.</param>
-        /// <param name="memberInfo">The member information.</param>
+        /// <param name="dtoType">The type.</param>
+        /// <param name="dtoMemberInfo">The member information.</param>
         /// <param name="lambdaExpression">The lambda expression.</param>
         /// <returns>Property Name</returns>
-        string Resolve(Type type, MemberInfo memberInfo, LambdaExpression lambdaExpression);
+        string Resolve(Type dtoType, MemberInfo dtoMemberInfo, LambdaExpression lambdaExpression);
     }
 }

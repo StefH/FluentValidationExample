@@ -31,14 +31,12 @@ namespace FluentValidationExample.Web
                 config.Filters.Add(typeof(GlobalExceptionFilter));
             })
             .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-
-            services.AddScoped<IFluentValidationPropertyNameResolver, FluentValidationPropertyNameResolver>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IMapper autoMapper, IFluentValidationPropertyNameResolver resolver)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IMapper autoMapper)
         {
-            ConfigureAutoMapperAndFluentValidation(autoMapper, resolver);
+            ConfigureAutoMapperAndFluentValidation(autoMapper);
 
             if (env.IsDevelopment())
             {
@@ -53,10 +51,11 @@ namespace FluentValidationExample.Web
             app.UseMvc();
         }
 
-        private void ConfigureAutoMapperAndFluentValidation(IMapper autoMapper, IFluentValidationPropertyNameResolver resolver)
+        private void ConfigureAutoMapperAndFluentValidation(IMapper mapper)
         {
-            autoMapper.ConfigurationProvider.AssertConfigurationIsValid();
+            mapper.ConfigurationProvider.AssertConfigurationIsValid();
 
+            var resolver = new FluentValidationPropertyNameResolver(mapper);
             ValidatorOptions.PropertyNameResolver = resolver.Resolve;
         }
     }

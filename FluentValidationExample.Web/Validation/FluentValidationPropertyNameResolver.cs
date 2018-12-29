@@ -2,7 +2,7 @@
 using FluentValidationExample.Common.Validation;
 using JetBrains.Annotations;
 using System;
-using System.Linq;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -11,6 +11,8 @@ namespace FluentValidationExample.Web.Validation
     internal class FluentValidationPropertyNameResolver : IFluentValidationPropertyNameResolver
     {
         private readonly IMapper _mapper;
+
+        private readonly IDictionary<(Type dtoType, string dtoProperty), string> _mappings = new Dictionary<(Type dtoType, string dtoProperty), string>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FluentValidationPropertyNameResolver"/> class.
@@ -21,27 +23,34 @@ namespace FluentValidationExample.Web.Validation
             Guard.NotNull(mapper, nameof(mapper));
 
             _mapper = mapper;
+
+            Init();
+        }
+
+        private void Init()
+        {
+            TypeMap[] allTypeMaps = _mapper.ConfigurationProvider.GetAllTypeMaps();
+            foreach (TypeMap map in allTypeMaps)
+            {
+                foreach (PropertyMap propertyMap in map.PropertyMaps)
+                {
+                    string sourceMemberName = propertyMap.SourceMember?.Name;
+                    _mappings.Add((map.DestinationType, propertyMap.DestinationName), sourceMemberName);
+                }
+            }
         }
 
         /// <inheritdoc cref="IFluentValidationPropertyNameResolver.Resolve(Type, MemberInfo, LambdaExpression)"/>
-        public string Resolve(Type type, MemberInfo memberInfo, LambdaExpression lambdaExpression)
+        public string Resolve(Type dtoType, MemberInfo dtoMemberInfo, LambdaExpression lambdaExpression)
         {
-            var allTypeMaps = _mapper.ConfigurationProvider.GetAllTypeMaps();
+            (Type, string) key = (dtoType, dtoMemberInfo?.Name);
 
-            var matchingTypeMaps = allTypeMaps.Where(m => m.DestinationType == type).ToArray();
-            if (matchingTypeMaps.Length == 0 || matchingTypeMaps.Length > 1)
+            if (_mappings.ContainsKey(key))
             {
-                return memberInfo.Name;
+                return _mappings[key];
             }
 
-            var matchingTypeMap = matchingTypeMaps.First();
-            var propertyMapping = matchingTypeMap.PropertyMaps.FirstOrDefault(pm => pm.DestinationName == memberInfo.Name);
-            if (propertyMapping == null || propertyMapping.SourceMember == null)
-            {
-                return memberInfo.Name;
-            }
-
-            return propertyMapping.SourceMember.Name;
+            return dtoMemberInfo?.Name;
         }
     }
 }
