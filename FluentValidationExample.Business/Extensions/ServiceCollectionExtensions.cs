@@ -1,7 +1,6 @@
 ﻿using FluentValidation;
 using FluentValidationExample.Business.Implementations;
 using FluentValidationExample.Business.Interfaces.Public;
-using FluentValidationExample.Business.Models.Public;
 using FluentValidationExample.Business.Validation;
 using FluentValidationExample.Common.Validation;
 using JetBrains.Annotations;
@@ -28,8 +27,12 @@ namespace Microsoft.Extensions.DependencyInjection
 
         private static void AddServices(this IServiceCollection services)
         {
-            services.AddTransient<IValidator<AddressDto>, AddressValidator>();
-            services.AddTransient<IValidator<PersonDto>, PersonValidator>();
+            services.Scan(scan => scan
+                .FromAssemblyOf<AddressValidator>()
+                .AddClasses(classes => classes.AssignableTo(typeof(IValidator<>)))
+                .AsImplementedInterfaces()
+                .WithTransientLifetime()
+            );
 
             services.AddScoped<IPersonService, PersonService>();
         }
