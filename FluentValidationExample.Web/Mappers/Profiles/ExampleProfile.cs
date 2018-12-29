@@ -11,7 +11,8 @@ namespace FluentValidationExample.Web.Mappers.Profiles
             CreateMap<Person, PersonDto>()
                 .ForMember(dto => dto.First, opt => opt.MapFrom(model => model.FirstName))
                 .ForMember(dto => dto.Last, opt => opt.MapFrom(model => model.LastName))
-                .ForMember(dto => dto.Address, opt => opt.Unflatten())
+                .ForMember(dto => dto.Address, opt => opt.MapFrom(model => new AddressDto { Street = model.Street }))
+
                 ;
         }
     }
