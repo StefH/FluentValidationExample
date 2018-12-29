@@ -4,6 +4,9 @@ using System.Reflection;
 
 namespace FluentValidationExample.Web.Validation
 {
+    /// <summary>
+    /// FluentValidationPropertyNameResolver to map the DTO-PropertyName to Model-PropertyName.
+    /// </summary>
     public interface IFluentValidationPropertyNameResolver
     {
         /// <summary>

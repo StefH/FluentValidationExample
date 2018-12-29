@@ -8,6 +8,10 @@ using System.Reflection;
 
 namespace FluentValidationExample.Web.Validation
 {
+    /// <summary>
+    /// Implementation from IFluentValidationPropertyNameResolver
+    /// </summary>
+    /// <seealso cref="IFluentValidationPropertyNameResolver" />
     internal class FluentValidationPropertyNameResolver : IFluentValidationPropertyNameResolver
     {
         private readonly IMapper _mapper;
@@ -34,8 +38,8 @@ namespace FluentValidationExample.Web.Validation
             {
                 foreach (PropertyMap propertyMap in map.PropertyMaps)
                 {
-                    string sourceMemberName = propertyMap.SourceMember?.Name;
-                    _mappings.Add((map.DestinationType, propertyMap.DestinationName), sourceMemberName);
+                    string modelMemberName = propertyMap.SourceMember?.Name;
+                    _mappings.Add((map.DestinationType, propertyMap.DestinationName), modelMemberName);
                 }
             }
         }
@@ -43,14 +47,12 @@ namespace FluentValidationExample.Web.Validation
         /// <inheritdoc cref="IFluentValidationPropertyNameResolver.Resolve(Type, MemberInfo, LambdaExpression)"/>
         public string Resolve(Type dtoType, MemberInfo dtoMemberInfo, LambdaExpression lambdaExpression)
         {
-            (Type, string) key = (dtoType, dtoMemberInfo?.Name);
+            string propertyName = dtoMemberInfo?.Name;
 
-            if (_mappings.ContainsKey(key))
-            {
-                return _mappings[key];
-            }
+            (Type, string) key = (dtoType, propertyName);
 
-            return dtoMemberInfo?.Name;
+            // Not found in dictionary, just return propertyName.
+            return _mappings.ContainsKey(key) ? _mappings[key] : propertyName;
         }
     }
 }
